@@ -48,6 +48,17 @@ router.post('/', requireInstitution, async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+// Get unique metadata (grades, boards, schools) for active institution
+router.get('/metadata', requireInstitution, async (req, res) => {
+  try {
+    const grades = await Student.distinct('grade', { institution: req.institutionId });
+    const boards = await Student.distinct('board', { institution: req.institutionId, board: { $ne: null, $ne: '' } });
+    const schools = await Student.distinct('school', { institution: req.institutionId });
+    res.json({ grades, boards, schools });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Update a student (making sure it belongs to the active institution)
 router.put('/:id', requireInstitution, async (req, res) => {

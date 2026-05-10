@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Users, Calendar, Settings, BookOpen, LogOut, Menu } from 'lucide-react';
+import { Home, Users, Calendar, Settings, LogOut, Menu, ClipboardList } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
@@ -15,6 +15,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   const navItems = [
     { path: '/', icon: <Home size={20} />, label: 'Dashboard' },
     { path: '/students', icon: <Users size={20} />, label: 'Students' },
+    { path: '/tests', icon: <ClipboardList size={20} />, label: 'Tests' },
     { path: '/timetable', icon: <Calendar size={20} />, label: 'Timetable' },
     { path: '/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];

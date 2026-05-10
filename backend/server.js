@@ -18,10 +18,12 @@ mongoose.connect('mongodb://127.0.0.1:27017/majestic-maths')
 const studentRoutes = require('./routes/students');
 const authRoutes = require('./routes/auth');
 const institutionRoutes = require('./routes/institutions');
+const testRoutes = require('./routes/tests');
 
 app.use('/api/students', studentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/institutions', institutionRoutes);
+app.use('/api/tests', testRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running');

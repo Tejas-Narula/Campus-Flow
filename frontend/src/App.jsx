@@ -9,6 +9,8 @@ import Timetable from './pages/Timetable';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Tests from './pages/Tests';
+import TestDetail from './pages/TestDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -51,6 +53,8 @@ function App() {
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
           <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+          <Route path="/tests" element={<ProtectedRoute><Tests /></ProtectedRoute>} />
+          <Route path="/tests/:id" element={<ProtectedRoute><TestDetail /></ProtectedRoute>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
