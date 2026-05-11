@@ -24,6 +24,53 @@ router.get('/', auth, requireInstitution, async (req, res) => {
   }
 });
 
+// Get existing chapters for selected grades and boards
+router.get('/metadata/chapters', auth, requireInstitution, async (req, res) => {
+  try {
+    const { grades, boards } = req.query;
+    console.log('Fetching chapters for:', { grades, boards, institutionId: req.institutionId });
+    
+    if (!grades || !boards) {
+      return res.json([]);
+    }
+    const gradesArray = grades.split(',').map(g => g.trim());
+    const boardsArray = boards.split(',').map(b => b.trim());
+
+    // Explicitly convert to ObjectId if it's a string, though Mongoose usually handles this
+    const mongoose = require('mongoose');
+    const instId = mongoose.Types.ObjectId.isValid(req.institutionId) 
+      ? new mongoose.Types.ObjectId(req.institutionId) 
+      : req.institutionId;
+
+    const tests = await Test.find({
+      institution: instId,
+      targetGrades: { $in: gradesArray },
+      targetBoards: { $in: boardsArray }
+    });
+
+    console.log(`Querying with:`, {
+      institution: instId,
+      targetGrades: { $in: gradesArray },
+      targetBoards: { $in: boardsArray }
+    });
+    console.log(`Found ${tests.length} matching tests`);
+
+    const chaptersSet = new Set();
+    tests.forEach(t => {
+      if (t.chapters) {
+        t.chapters.forEach(c => chaptersSet.add(c));
+      }
+    });
+
+    const result = Array.from(chaptersSet);
+    console.log('Returning unique chapters:', result);
+    res.json(result);
+  } catch (error) {
+    console.error('Error in metadata/chapters:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Create a new test
 router.post('/', auth, requireInstitution, async (req, res) => {
   const test = new Test({
@@ -32,7 +79,8 @@ router.post('/', auth, requireInstitution, async (req, res) => {
     totalMarks: req.body.totalMarks,
     targetGrades: req.body.targetGrades || [],
     targetBoards: req.body.targetBoards || [],
-    targetSchools: req.body.targetSchools || []
+    targetSchools: req.body.targetSchools || [],
+    chapters: req.body.chapters || []
   });
 
   try {

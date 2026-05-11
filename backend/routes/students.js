@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
+const Test = require('../models/Test');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Require auth for all student routes
@@ -55,6 +56,25 @@ router.get('/metadata', requireInstitution, async (req, res) => {
     const boards = await Student.distinct('board', { institution: req.institutionId, board: { $ne: null, $ne: '' } });
     const schools = await Student.distinct('school', { institution: req.institutionId });
     res.json({ grades, boards, schools });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.delete('/:id', requireInstitution, async (req, res) => {
+  try {
+    const deletedStudent = await Student.findOneAndDelete({ _id: req.params.id, institution: req.institutionId });
+    if (!deletedStudent) {
+      return res.status(404).json({ message: 'Student not found in this institution' });
+    }
+
+    // Remove the student from all tests within the institution
+    await Test.updateMany(
+      { institution: req.institutionId },
+      { $pull: { students: { student: req.params.id } } }
+    );
+
+    res.json(deletedStudent);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

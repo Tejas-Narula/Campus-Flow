@@ -23,6 +23,9 @@ const testSchema = new mongoose.Schema({
   targetSchools: [{
     type: String
   }],
+  chapters: [{
+    type: String
+  }],
   status: {
     type: String,
     enum: ['not started', 'ongoing', 'finished'],

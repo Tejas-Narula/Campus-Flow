@@ -104,6 +104,9 @@ const TestDetail = () => {
           {test.targetSchools.length > 0 && (
             <span className="bg-orange-50 text-orange-700 px-3 py-1 rounded-md">Schools: {test.targetSchools.join(', ')}</span>
           )}
+          {test.chapters && test.chapters.length > 0 && (
+            <span className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-md">Chapters: {test.chapters.join(', ')}</span>
+          )}
         </div>
       </div>
 

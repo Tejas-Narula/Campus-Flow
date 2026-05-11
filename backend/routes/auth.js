@@ -40,11 +40,17 @@ router.post('/register', async (req, res) => {
       details: 'Automatically created institution',
     });
 
-    res.status(201).json({
-      _id: teacher._id,
-      name: teacher.name,
-      email: teacher.email,
-      token: generateToken(teacher._id),
+    const token = generateToken(teacher._id);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    res.json({
+      teacher: { id: teacher._id, name: teacher.name, email: teacher.email },
       defaultInstitution: defaultInstitution._id
     });
   } catch (error) {
@@ -67,11 +73,17 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    const token = generateToken(teacher._id);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     res.json({
-      _id: teacher._id,
-      name: teacher.name,
-      email: teacher.email,
-      token: generateToken(teacher._id),
+      teacher: { id: teacher._id, name: teacher.name, email: teacher.email }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -89,6 +101,12 @@ router.get('/me', authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+// @route   POST /api/auth/logout
+router.post('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out successfully' });
 });
 
 module.exports = router;

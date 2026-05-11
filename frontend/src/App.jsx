@@ -14,14 +14,14 @@ import TestDetail from './pages/TestDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { token, loading } = useContext(AuthContext);
+  const { teacher, loading } = useContext(AuthContext);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
   if (loading) {
     return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>;
   }
   
-  if (!token) {
+  if (!teacher) {
     return <Navigate to="/landing" replace />;
   }
   

@@ -8,16 +8,19 @@ const CreateTestModal = ({ onClose, onCreate }) => {
     totalMarks: '',
     targetGrades: [],
     targetBoards: [],
-    targetSchools: []
+    targetSchools: [],
+    chapters: []
   });
+
+  const [availableChapters, setAvailableChapters] = useState([]);
 
   const [metadata, setMetadata] = useState({ grades: [], boards: [], schools: [] });
   
-  // Custom input states
   const [customInputs, setCustomInputs] = useState({
     grade: { isOpen: false, value: '' },
     board: { isOpen: false, value: '' },
-    school: { isOpen: false, value: '' }
+    school: { isOpen: false, value: '' },
+    chapter: { isOpen: false, value: '' }
   });
 
   useEffect(() => {
@@ -31,6 +34,30 @@ const CreateTestModal = ({ onClose, onCreate }) => {
     };
     fetchMetadata();
   }, []);
+
+  useEffect(() => {
+    const fetchChapters = async () => {
+      if (formData.targetGrades.length > 0 && formData.targetBoards.length > 0) {
+        try {
+          const res = await axios.get(`http://localhost:5000/api/tests/metadata/chapters`, {
+            params: {
+              grades: formData.targetGrades.join(','),
+              boards: formData.targetBoards.join(',')
+            }
+          });
+          console.log('Fetched chapters:', res.data);
+          setAvailableChapters(res.data);
+        } catch (err) {
+          console.error('Failed to fetch chapters', err);
+        }
+      } else {
+        setAvailableChapters([]);
+        // Clear selected chapters if grade/board is deselected
+        setFormData(prev => ({ ...prev, chapters: [] }));
+      }
+    };
+    fetchChapters();
+  }, [formData.targetGrades, formData.targetBoards]);
 
   const handleArrayToggle = (field, value) => {
     setFormData(prev => {
@@ -68,10 +95,38 @@ const CreateTestModal = ({ onClose, onCreate }) => {
     e.preventDefault();
     if (!formData.name || !formData.totalMarks) return;
     
-    onCreate({
+    // Auto-add any pending custom inputs before submitting
+    let finalChapters = [...formData.chapters];
+    if (customInputs.chapter.value.trim() && !finalChapters.includes(customInputs.chapter.value.trim())) {
+      finalChapters.push(customInputs.chapter.value.trim());
+    }
+
+    let finalGrades = [...formData.targetGrades];
+    if (customInputs.grade.value.trim() && !finalGrades.includes(customInputs.grade.value.trim())) {
+      finalGrades.push(customInputs.grade.value.trim());
+    }
+
+    let finalBoards = [...formData.targetBoards];
+    if (customInputs.board.value.trim() && !finalBoards.includes(customInputs.board.value.trim())) {
+      finalBoards.push(customInputs.board.value.trim());
+    }
+
+    let finalSchools = [...formData.targetSchools];
+    if (customInputs.school.value.trim() && !finalSchools.includes(customInputs.school.value.trim())) {
+      finalSchools.push(customInputs.school.value.trim());
+    }
+
+    const finalData = {
       ...formData,
+      chapters: finalChapters,
+      targetGrades: finalGrades,
+      targetBoards: finalBoards,
+      targetSchools: finalSchools,
       totalMarks: Number(formData.totalMarks)
-    });
+    };
+
+    console.log('Creating test with data:', finalData);
+    onCreate(finalData);
   };
 
   // Helper to render pill sections
@@ -181,6 +236,11 @@ const CreateTestModal = ({ onClose, onCreate }) => {
 
           {renderPillSection('Target Grades', metadata.grades, 'targetGrades', 'grade')}
           {renderPillSection('Target Boards', metadata.boards, 'targetBoards', 'board')}
+          
+          {formData.targetGrades.length > 0 && formData.targetBoards.length > 0 && (
+            renderPillSection('Chapters', availableChapters, 'chapters', 'chapter')
+          )}
+
           {renderPillSection('Target Schools', metadata.schools, 'targetSchools', 'school')}
           
         </form>

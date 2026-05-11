@@ -1,21 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Ensure axios always sends cookies
+axios.defaults.withCredentials = true;
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [teacher, setTeacher] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [activeInstitution, setActiveInstitution] = useState(localStorage.getItem('activeInstitution') || null);
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Set default auth header for axios
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common['Authorization'];
-  }
 
   if (activeInstitution) {
     axios.defaults.headers.common['x-institution-id'] = activeInstitution;
@@ -36,54 +31,55 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchTeacherData = async () => {
-      if (token) {
-        try {
-          const res = await axios.get('http://localhost:5000/api/auth/me');
-          setTeacher(res.data);
-          
-          const institutionsData = await fetchInstitutions();
-          
-          // Set active institution if not already set, or if it doesn't match any of the fetched ones
-          if (!activeInstitution && institutionsData.length > 0) {
-            setActiveInstitution(institutionsData[0]._id);
-            localStorage.setItem('activeInstitution', institutionsData[0]._id);
-          }
-        } catch (err) {
-          console.error(err);
-          logout();
+      try {
+        const res = await axios.get('http://localhost:5000/api/auth/me');
+        setTeacher(res.data);
+        
+        const institutionsData = await fetchInstitutions();
+        
+        // Set active institution if not already set, or if it doesn't match any of the fetched ones
+        if (!activeInstitution && institutionsData.length > 0) {
+          setActiveInstitution(institutionsData[0]._id);
+          localStorage.setItem('activeInstitution', institutionsData[0]._id);
         }
+      } catch (err) {
+        // If 401, it means no valid cookie, just clear teacher
+        setTeacher(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchTeacherData();
-  }, [token]);
+  }, []);
 
   const login = (userData) => {
-    setToken(userData.token);
-    setTeacher(userData);
-    localStorage.setItem('token', userData.token);
-    
-    // Default active institution handling happens in useEffect on token change
+    setTeacher(userData.teacher);
+    // Default active institution handling happens via a page reload or subsequent logic usually,
+    // but we can just reload the page to cleanly fetch everything since we are using cookies now
+    window.location.href = '/tests';
   };
 
   const register = (userData) => {
-    setToken(userData.token);
-    setTeacher(userData);
-    localStorage.setItem('token', userData.token);
+    setTeacher(userData.teacher);
     if (userData.defaultInstitution) {
       setActiveInstitution(userData.defaultInstitution);
       localStorage.setItem('activeInstitution', userData.defaultInstitution);
     }
+    window.location.href = '/tests';
   };
 
-  const logout = () => {
-    setToken(null);
+  const logout = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/logout');
+    } catch (err) {
+      console.error('Logout failed', err);
+    }
     setTeacher(null);
     setActiveInstitution(null);
     setInstitutions([]);
-    localStorage.removeItem('token');
     localStorage.removeItem('activeInstitution');
+    window.location.href = '/login';
   };
 
   const switchInstitution = (institutionId) => {
@@ -94,7 +90,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ teacher, token, activeInstitution, institutions, loading, login, register, logout, switchInstitution, fetchInstitutions }}>
+    <AuthContext.Provider value={{ teacher, activeInstitution, institutions, loading, login, register, logout, switchInstitution, fetchInstitutions }}>
       {children}
     </AuthContext.Provider>
   );

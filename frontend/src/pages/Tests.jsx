@@ -119,6 +119,14 @@ const Tests = () => {
                     <span className="text-gray-500">Total Marks:</span>
                     <span className="font-medium text-gray-900">{test.totalMarks}</span>
                   </div>
+                  {test.chapters && test.chapters.length > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Chapters:</span>
+                      <span className="font-medium text-gray-900 line-clamp-1 text-right ml-4" title={test.chapters.join(', ')}>
+                        {test.chapters.join(', ')}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-500">Students:</span>
                     <span className="font-medium text-gray-900">{test.students?.length || 0}</span>
