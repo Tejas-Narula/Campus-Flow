@@ -4,21 +4,25 @@ import { Home, Users, Calendar, Settings, LogOut, Menu, ClipboardList } from 'lu
 import { AuthContext } from '../context/AuthContext';
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
-  const { teacher, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/landing');
+    navigate('/login');
   };
 
-  const navItems = [
+  let navItems = [
     { path: '/', icon: <Home size={20} />, label: 'Dashboard' },
-    { path: '/students', icon: <Users size={20} />, label: 'Students' },
     { path: '/tests', icon: <ClipboardList size={20} />, label: 'Tests' },
+    { path: '/assignments', icon: <Calendar size={20} />, label: 'Assignments' },
     { path: '/timetable', icon: <Calendar size={20} />, label: 'Timetable' },
-    { path: '/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
+
+  if (user?.role !== 'student') {
+    navItems.splice(1, 0, { path: '/students', icon: <Users size={20} />, label: 'Students' });
+    navItems.push({ path: '/settings', icon: <Settings size={20} />, label: 'Settings' });
+  }
 
   return (
     <div className={`bg-white border-r border-gray-100 flex flex-col shadow-sm z-10 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
@@ -61,17 +65,17 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
         <div className="flex items-center px-2 mb-4">
           <div 
             className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold shrink-0" 
-            title={teacher?.name}
+            title={user?.name}
           >
-            {teacher?.name?.charAt(0) || 'T'}
+            {user?.name?.charAt(0) || 'U'}
           </div>
           <div 
             className={`overflow-hidden transition-all duration-300 ${
               isCollapsed ? 'w-0 opacity-0 ml-0' : 'w-40 opacity-100 ml-3'
             }`}
           >
-            <p className="text-sm font-medium text-gray-900 truncate">{teacher?.name}</p>
-            <p className="text-xs text-gray-500 truncate">{teacher?.email}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+            <p className="text-xs text-gray-500 truncate">{user?.email || user?.phone}</p>
           </div>
         </div>
         

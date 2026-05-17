@@ -5,7 +5,8 @@ import { AuthContext } from '../context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isStudent, setIsStudent] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '', phone: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
@@ -17,8 +18,13 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
-      login(res.data);
+      if (isStudent) {
+        const res = await axios.post('http://localhost:5000/api/auth/student-login', { email: formData.email, password: formData.password });
+        login(res.data);
+      } else {
+        const res = await axios.post('http://localhost:5000/api/auth/login', { email: formData.email, password: formData.password });
+        login(res.data);
+      }
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -33,12 +39,28 @@ const Login = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-            register as a new teacher
-          </Link>
-        </p>
+        <div className="mt-4 flex justify-center space-x-4">
+          <button
+            onClick={() => { setIsStudent(false); setError(''); }}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${!isStudent ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border border-gray-300'}`}
+          >
+            Teacher/Admin
+          </button>
+          <button
+            onClick={() => { setIsStudent(true); setError(''); }}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${isStudent ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border border-gray-300'}`}
+          >
+            Student
+          </button>
+        </div>
+        {!isStudent && (
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Or{' '}
+            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              register as a new teacher
+            </Link>
+          </p>
+        )}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -49,6 +71,7 @@ const Login = () => {
                 {error}
               </div>
             )}
+            
             <div>
               <label className="block text-sm font-medium text-gray-700">Email address</label>
               <div className="mt-1">

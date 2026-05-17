@@ -4,7 +4,7 @@ import { Building2, ChevronDown, Plus, Menu } from 'lucide-react';
 import CreateInstitutionModal from './CreateInstitutionModal';
 
 const Header = () => {
-  const { institutions, activeInstitution, switchInstitution } = useContext(AuthContext);
+  const { user, institutions, activeInstitution, switchInstitution } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -55,18 +55,20 @@ const Header = () => {
                 </button>
               ))}
             </div>
-            <div className="border-t border-gray-100 p-2">
-              <button
-                onClick={() => {
-                  setIsDropdownOpen(false);
-                  setIsModalOpen(true);
-                }}
-                className="w-full flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                <Plus size={16} />
-                <span>Create New</span>
-              </button>
-            </div>
+            {user?.role !== 'student' && (
+              <div className="border-t border-gray-100 p-2">
+                <button
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    setIsModalOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  <Plus size={16} />
+                  <span>Create New</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

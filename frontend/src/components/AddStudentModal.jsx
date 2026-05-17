@@ -9,7 +9,8 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
     board: '',
     school: '',
     status: 'enrolled',
-    phone: '',
+    email: '',
+    batch: '',
     parentsName: '',
     parentsPhone: '',
     birthDate: ''
@@ -18,10 +19,11 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
   const [customFields, setCustomFields] = useState({
     grade: false,
     board: false,
-    school: false
+    school: false,
+    batch: false
   });
 
-  const [metadata, setMetadata] = useState({ grades: [], boards: [], schools: [] });
+  const [metadata, setMetadata] = useState({ grades: [], boards: [], schools: [], batches: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -40,9 +42,9 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
       // Reset state when closed
       setFormData({
         name: '', grade: '', board: '', school: '', status: 'enrolled', 
-        phone: '', parentsName: '', parentsPhone: '', birthDate: ''
+        email: '', batch: '', parentsName: '', parentsPhone: '', birthDate: ''
       });
-      setCustomFields({ grade: false, board: false, school: false });
+      setCustomFields({ grade: false, board: false, school: false, batch: false });
       setError('');
     }
   }, [isOpen]);
@@ -160,9 +162,10 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-gray-100 pb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Student Phone</label>
-                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" placeholder="+1 234 567 890" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Student Email *</label>
+                <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" placeholder="student@example.com" />
               </div>
+              {renderDropdownOrInput('batch', 'Batch', metadata.batches || [], true)}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white">

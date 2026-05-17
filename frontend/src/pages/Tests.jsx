@@ -29,6 +29,12 @@ const Tests = () => {
     }
   }, [activeInstitution]);
 
+  const { user } = useContext(AuthContext);
+  const currentStudentProfile = user?.allProfiles?.find(p => p.institution?._id === activeInstitution || p.institution === activeInstitution);
+  const displayTests = user?.role === 'student' && currentStudentProfile 
+    ? tests.filter(t => t.students?.some(s => s.student.toString() === currentStudentProfile._id))
+    : tests;
+
   const handleCreateTest = async (testData) => {
     try {
       const response = await axios.post('http://localhost:5000/api/tests', testData);
@@ -62,34 +68,40 @@ const Tests = () => {
           <h1 className="text-2xl font-bold text-gray-900">Tests</h1>
           <p className="text-gray-500 text-sm mt-1">Manage and track student assessments</p>
         </div>
-        <button 
-          onClick={() => setIsCreateModalOpen(true)}
-          className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2"
-        >
-          <Plus size={18} />
-          <span>Create Test</span>
-        </button>
+        {user?.role !== 'student' && (
+          <button 
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2"
+          >
+            <Plus size={18} />
+            <span>Create Test</span>
+          </button>
+        )}
       </div>
 
       {loading ? (
         <div className="text-center py-12 text-gray-500">Loading tests...</div>
-      ) : tests.length === 0 ? (
+      ) : displayTests.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
           <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
             <ClipboardList size={32} />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">No tests created yet</h3>
-          <p className="text-gray-500 mb-6 max-w-sm mx-auto">Start evaluating your students by creating your first test.</p>
-          <button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className="text-indigo-600 font-medium hover:text-indigo-700"
-          >
-            Create your first test
-          </button>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">No tests to show</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {user?.role === 'student' ? "You aren't enrolled in any tests yet." : "Start evaluating your students by creating your first test."}
+          </p>
+          {user?.role !== 'student' && (
+            <button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="text-indigo-600 font-medium hover:text-indigo-700"
+            >
+              Create your first test
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tests.map(test => (
+          {displayTests.map(test => (
             <div 
               key={test._id} 
               onClick={() => navigate(`/tests/${test._id}`)}

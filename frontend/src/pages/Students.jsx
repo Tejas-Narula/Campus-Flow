@@ -110,8 +110,12 @@ const StudentCard = ({ student, onUpdate, onDelete }) => {
                   <input className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" value={editData.school} onChange={e => setEditData({ ...editData, school: e.target.value })} placeholder="School" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Phone</label>
-                  <input className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" value={editData.phone || ''} onChange={e => setEditData({ ...editData, phone: e.target.value })} placeholder="Phone" />
+                  <label className="block text-xs text-gray-500 mb-1">Email</label>
+                  <input className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" value={editData.email || ''} onChange={e => setEditData({ ...editData, email: e.target.value })} placeholder="Email" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Batch</label>
+                  <input className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" value={editData.batch || ''} onChange={e => setEditData({ ...editData, batch: e.target.value })} placeholder="Batch" />
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">Parent's Name</label>
@@ -164,7 +168,8 @@ const StudentCard = ({ student, onUpdate, onDelete }) => {
                 <div><span className="block text-gray-400 text-xs mb-1">Grade/Class</span><span className="font-medium text-gray-800">{student.grade}</span></div>
                 <div><span className="block text-gray-400 text-xs mb-1">Board</span><span className="font-medium text-gray-800">{student.board || '-'}</span></div>
                 <div><span className="block text-gray-400 text-xs mb-1">School</span><span className="font-medium text-gray-800">{student.school}</span></div>
-                <div><span className="block text-gray-400 text-xs mb-1">Phone</span><span className="font-medium text-gray-800">{student.phone || '-'}</span></div>
+                <div><span className="block text-gray-400 text-xs mb-1">Email</span><span className="font-medium text-gray-800">{student.email || '-'}</span></div>
+                <div><span className="block text-gray-400 text-xs mb-1">Batch</span><span className="font-medium text-gray-800">{student.batch || '-'}</span></div>
                 <div><span className="block text-gray-400 text-xs mb-1">Parent's Name</span><span className="font-medium text-gray-800">{student.parentsName || '-'}</span></div>
                 <div><span className="block text-gray-400 text-xs mb-1">Parent's Phone</span><span className="font-medium text-gray-800">{student.parentsPhone || '-'}</span></div>
                 <div><span className="block text-gray-400 text-xs mb-1">Birth Date</span><span className="font-medium text-gray-800">{student.birthDate ? new Date(student.birthDate).toLocaleDateString() : '-'}</span></div>

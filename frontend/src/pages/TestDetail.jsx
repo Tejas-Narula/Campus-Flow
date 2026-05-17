@@ -8,7 +8,7 @@ import EnterMarksModal from '../components/EnterMarksModal';
 
 const TestDetail = () => {
   const { id } = useParams();
-  const { activeInstitution } = useContext(AuthContext);
+  const { user, activeInstitution } = useContext(AuthContext);
   const navigate = useNavigate();
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,19 +78,29 @@ const TestDetail = () => {
           </div>
           
           <div>
-            <select
-              value={test.status}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className={`text-sm font-medium rounded-lg border-0 py-2 pl-3 pr-8 ring-1 ring-inset focus:ring-2 focus:ring-indigo-600 outline-none ${
-                test.status === 'ongoing' ? 'bg-amber-50 text-amber-700 ring-amber-500/30' :
-                test.status === 'finished' ? 'bg-green-50 text-green-700 ring-green-500/30' :
-                'bg-gray-50 text-gray-700 ring-gray-500/30'
-              }`}
-            >
-              <option value="not started">Not Started</option>
-              <option value="ongoing">Ongoing</option>
-              <option value="finished">Finished</option>
-            </select>
+            {user?.role === 'student' ? (
+              <span className={`text-sm font-medium rounded-lg px-4 py-2 ${
+                test.status === 'ongoing' ? 'bg-amber-50 text-amber-700 ring-amber-500/30 ring-1 ring-inset' :
+                test.status === 'finished' ? 'bg-green-50 text-green-700 ring-green-500/30 ring-1 ring-inset' :
+                'bg-gray-50 text-gray-700 ring-gray-500/30 ring-1 ring-inset'
+              }`}>
+                {test.status.charAt(0).toUpperCase() + test.status.slice(1)}
+              </span>
+            ) : (
+              <select
+                value={test.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className={`text-sm font-medium rounded-lg border-0 py-2 pl-3 pr-8 ring-1 ring-inset focus:ring-2 focus:ring-indigo-600 outline-none ${
+                  test.status === 'ongoing' ? 'bg-amber-50 text-amber-700 ring-amber-500/30' :
+                  test.status === 'finished' ? 'bg-green-50 text-green-700 ring-green-500/30' :
+                  'bg-gray-50 text-gray-700 ring-gray-500/30'
+                }`}
+              >
+                <option value="not started">Not Started</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="finished">Finished</option>
+              </select>
+            )}
           </div>
         </div>
 
@@ -111,24 +121,26 @@ const TestDetail = () => {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Students & Marks</h2>
-        <div className="flex space-x-3">
-          <button 
-            onClick={() => setIsManageStudentsModalOpen(true)}
-            className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
-          >
-            <Settings size={16} />
-            <span>Manage Students</span>
-          </button>
-          <button 
-            onClick={() => setIsEnterMarksModalOpen(true)}
-            disabled={test.students.length === 0}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PenTool size={16} />
-            <span>Enter Marks</span>
-          </button>
-        </div>
+        <h2 className="text-xl font-bold text-gray-900">{user?.role === 'student' ? 'My Result' : 'Students & Marks'}</h2>
+        {user?.role !== 'student' && (
+          <div className="flex space-x-3">
+            <button 
+              onClick={() => setIsManageStudentsModalOpen(true)}
+              className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
+            >
+              <Settings size={16} />
+              <span>Manage Students</span>
+            </button>
+            <button 
+              onClick={() => setIsEnterMarksModalOpen(true)}
+              disabled={test.students.length === 0}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <PenTool size={16} />
+              <span>Enter Marks</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {test.students.length === 0 ? (
@@ -136,12 +148,14 @@ const TestDetail = () => {
           <Users size={32} className="text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-gray-900 mb-2">No students assigned</h3>
           <p className="text-gray-500 mb-6">Assign students to this test to start tracking their marks.</p>
-          <button 
-            onClick={() => setIsManageStudentsModalOpen(true)}
-            className="text-indigo-600 font-medium hover:text-indigo-700"
-          >
-            Manage Test Students
-          </button>
+          {user?.role !== 'student' && (
+            <button 
+              onClick={() => setIsManageStudentsModalOpen(true)}
+              className="text-indigo-600 font-medium hover:text-indigo-700"
+            >
+              Manage Test Students
+            </button>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -155,7 +169,12 @@ const TestDetail = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {test.students.map(({ student, marksObtained }) => (
+              {(user?.role === 'student' 
+                ? test.students.filter(s => {
+                    const currentProfile = user.allProfiles?.find(p => p.institution?._id === activeInstitution || p.institution === activeInstitution);
+                    return s.student._id === currentProfile?._id;
+                  }) 
+                : test.students).map(({ student, marksObtained }) => (
                 <tr key={student._id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">{student.name}</div>

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const Student = require('../models/Student');
 const Test = require('../models/Test');
 const authMiddleware = require('../middleware/authMiddleware');
@@ -29,33 +30,39 @@ router.get('/', requireInstitution, async (req, res) => {
 
 // Add a new student to the active institution
 router.post('/', requireInstitution, async (req, res) => {
-  const student = new Student({
-    name: req.body.name,
-    grade: req.body.grade,
-    board: req.body.board,
-    school: req.body.school,
-    status: req.body.status || 'enrolled',
-    phone: req.body.phone,
-    parentsName: req.body.parentsName,
-    parentsPhone: req.body.parentsPhone,
-    birthDate: req.body.birthDate,
-    institution: req.institutionId
-  });
-
   try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.email, salt); // Password is auto-generated as email initially
+
+    const student = new Student({
+      name: req.body.name,
+      grade: req.body.grade,
+      board: req.body.board,
+      batch: req.body.batch,
+      school: req.body.school,
+      status: req.body.status || 'enrolled',
+      email: req.body.email,
+      password: hashedPassword,
+      parentsName: req.body.parentsName,
+      parentsPhone: req.body.parentsPhone,
+      birthDate: req.body.birthDate,
+      institution: req.institutionId
+    });
+
     const newStudent = await student.save();
     res.status(201).json(newStudent);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
-// Get unique metadata (grades, boards, schools) for active institution
+// Get unique metadata (grades, boards, schools, batches) for active institution
 router.get('/metadata', requireInstitution, async (req, res) => {
   try {
     const grades = await Student.distinct('grade', { institution: req.institutionId });
     const boards = await Student.distinct('board', { institution: req.institutionId, board: { $ne: null, $ne: '' } });
     const schools = await Student.distinct('school', { institution: req.institutionId });
-    res.json({ grades, boards, schools });
+    const batches = await Student.distinct('batch', { institution: req.institutionId, batch: { $ne: null, $ne: '' } });
+    res.json({ grades, boards, schools, batches });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -9,7 +9,9 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_for_local_dev');
-    req.teacher = decoded;
+    req.user = decoded; // Contains { id, role } or { phone, role: 'student' }
+    // for backward compatibility:
+    req.teacher = decoded; 
     next();
   } catch (err) {
     res.status(401).json({ message: 'Token is not valid' });

@@ -7,7 +7,7 @@ axios.defaults.withCredentials = true;
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [teacher, setTeacher] = useState(null);
+  const [user, setUser] = useState(null);
   const [activeInstitution, setActiveInstitution] = useState(localStorage.getItem('activeInstitution') || null);
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,10 +30,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const fetchTeacherData = async () => {
+    const fetchUserData = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/auth/me');
-        setTeacher(res.data);
+        setUser(res.data);
         
         const institutionsData = await fetchInstitutions();
         
@@ -43,25 +43,25 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('activeInstitution', institutionsData[0]._id);
         }
       } catch (err) {
-        // If 401, it means no valid cookie, just clear teacher
-        setTeacher(null);
+        // If 401, it means no valid cookie, just clear user
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTeacherData();
+    fetchUserData();
   }, []);
 
   const login = (userData) => {
-    setTeacher(userData.teacher);
+    setUser(userData.teacher || userData.student);
     // Default active institution handling happens via a page reload or subsequent logic usually,
     // but we can just reload the page to cleanly fetch everything since we are using cookies now
-    window.location.href = '/tests';
+    window.location.href = '/';
   };
 
   const register = (userData) => {
-    setTeacher(userData.teacher);
+    setUser(userData.teacher);
     if (userData.defaultInstitution) {
       setActiveInstitution(userData.defaultInstitution);
       localStorage.setItem('activeInstitution', userData.defaultInstitution);
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout failed', err);
     }
-    setTeacher(null);
+    setUser(null);
     setActiveInstitution(null);
     setInstitutions([]);
     localStorage.removeItem('activeInstitution');
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ teacher, activeInstitution, institutions, loading, login, register, logout, switchInstitution, fetchInstitutions }}>
+    <AuthContext.Provider value={{ user, activeInstitution, institutions, loading, login, register, logout, switchInstitution, fetchInstitutions }}>
       {children}
     </AuthContext.Provider>
   );

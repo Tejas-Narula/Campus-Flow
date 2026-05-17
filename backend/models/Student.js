@@ -12,6 +12,10 @@ const studentSchema = new mongoose.Schema({
   board: {
     type: String,
   },
+  batch: {
+    type: String,
+    required: true,
+  },
   school: {
     type: String,
     required: true,
@@ -21,8 +25,13 @@ const studentSchema = new mongoose.Schema({
     enum: ['enrolled', 'past'],
     default: 'enrolled',
   },
-  phone: {
+  email: {
     type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
   },
   parentsName: {
     type: String,

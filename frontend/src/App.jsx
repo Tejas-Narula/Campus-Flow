@@ -6,30 +6,32 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Students from './pages/Students';
 import Timetable from './pages/Timetable';
-import Landing from './pages/Landing';
+import Settings from './pages/Settings';
+
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Tests from './pages/Tests';
 import TestDetail from './pages/TestDetail';
+import Assignments from './pages/Assignments';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { teacher, loading } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  
+
   if (loading) {
     return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>;
   }
-  
-  if (!teacher) {
-    return <Navigate to="/landing" replace />;
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
-  
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
-      <Sidebar 
-        isCollapsed={isSidebarCollapsed} 
-        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
@@ -46,16 +48,18 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/landing" element={<Landing />} />
+          <Route path="/landing" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          
+
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/students" element={<ProtectedRoute><Students /></ProtectedRoute>} />
           <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
           <Route path="/tests" element={<ProtectedRoute><Tests /></ProtectedRoute>} />
           <Route path="/tests/:id" element={<ProtectedRoute><TestDetail /></ProtectedRoute>} />
-          
+          <Route path="/assignments" element={<ProtectedRoute><Assignments /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
