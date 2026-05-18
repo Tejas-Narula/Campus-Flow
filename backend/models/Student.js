@@ -7,18 +7,15 @@ const studentSchema = new mongoose.Schema({
   },
   grade: {
     type: String,
-    required: true,
   },
   board: {
     type: String,
   },
   batch: {
     type: String,
-    required: true,
   },
   school: {
     type: String,
-    required: true,
   },
   status: {
     type: String,
