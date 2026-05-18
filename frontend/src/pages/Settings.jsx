@@ -14,7 +14,7 @@ function Settings() {
     if (!window.confirm(`Are you sure you want to delete "${activeInst?.name || 'this institution'}"? This will remove all associated data.`)) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/institutions/${activeInstitution}`);
+      await axios.delete(`/api/institutions/${activeInstitution}`);
       alert('Institution deleted successfully');
 
       // Refresh the list of institutions

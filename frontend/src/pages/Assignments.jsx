@@ -24,7 +24,7 @@ const Assignments = () => {
   const fetchBatches = async () => {
     if (!activeInstitution) return;
     try {
-      const res = await axios.get('http://localhost:5000/api/students/metadata');
+      const res = await axios.get('/api/students/metadata');
       if (res.data.batches) {
         setBatches(res.data.batches);
       }
@@ -38,7 +38,7 @@ const Assignments = () => {
     if (!activeInstitution) return;
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/assignments');
+      const res = await axios.get('/api/assignments');
       setAssignments(res.data);
     } catch (err) {
       console.error(err);
@@ -66,7 +66,7 @@ const Assignments = () => {
     });
 
     try {
-      const res = await axios.post('http://localhost:5000/api/assignments', data, {
+      const res = await axios.post('/api/assignments', data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setAssignments([res.data, ...assignments]);
@@ -221,7 +221,7 @@ const Assignments = () => {
                       return (
                         <a
                           key={index}
-                          href={`http://localhost:5000${fileUrl}`}
+                          href={`${fileUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center px-3 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-sm text-indigo-600 font-medium transition-colors"

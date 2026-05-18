@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Ensure axios always sends cookies
+// Ensure axios always sends cookies and uses the production/local api base url
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const AuthContext = createContext();
 
@@ -20,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchInstitutions = async () => {
     try {
-      const instRes = await axios.get('http://localhost:5000/api/institutions');
+      const instRes = await axios.get('/api/institutions');
       setInstitutions(instRes.data);
       return instRes.data;
     } catch (err) {
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me');
+        const res = await axios.get('/api/auth/me');
         setUser(res.data);
         
         const institutionsData = await fetchInstitutions();
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout');
+      await axios.post('/api/auth/logout');
     } catch (err) {
       console.error('Logout failed', err);
     }

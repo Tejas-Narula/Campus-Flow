@@ -14,7 +14,7 @@ const Tests = () => {
 
   const fetchTests = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/tests');
+      const response = await axios.get('/api/tests');
       setTests(response.data);
     } catch (error) {
       console.error('Failed to fetch tests', error);
@@ -37,7 +37,7 @@ const Tests = () => {
 
   const handleCreateTest = async (testData) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/tests', testData);
+      const response = await axios.post('/api/tests', testData);
       setTests([response.data, ...tests]);
       setIsCreateModalOpen(false);
     } catch (error) {

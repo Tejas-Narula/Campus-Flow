@@ -31,7 +31,7 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
     if (isOpen) {
       const fetchMetadata = async () => {
         try {
-          const res = await axios.get('http://localhost:5000/api/students/metadata');
+          const res = await axios.get('/api/students/metadata');
           setMetadata(res.data);
         } catch (err) {
           console.error('Failed to fetch metadata', err);
@@ -69,7 +69,7 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
     setError('');
     
     try {
-      const res = await axios.post('http://localhost:5000/api/students', formData);
+      const res = await axios.post('/api/students', formData);
       onStudentAdded(res.data);
       onClose();
     } catch (err) {

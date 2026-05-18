@@ -17,12 +17,12 @@ const Dashboard = () => {
       try {
         if (user?.role === 'student') {
           // Fetch only tests for the student dashboard
-          const testsRes = await axios.get('http://localhost:5000/api/tests');
+          const testsRes = await axios.get('/api/tests');
           setTests(testsRes.data);
         } else {
           const [studentsRes, testsRes] = await Promise.all([
-            axios.get('http://localhost:5000/api/students'),
-            axios.get('http://localhost:5000/api/tests')
+            axios.get('/api/students'),
+            axios.get('/api/tests')
           ]);
           setStudents(studentsRes.data);
           setTests(testsRes.data);

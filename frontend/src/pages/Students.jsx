@@ -20,7 +20,7 @@ const StudentCard = ({ student, onUpdate, onDelete }) => {
     setIsSaving(true);
     try {
       const { _id, __v, createdAt, updatedAt, ...updatePayload } = editData;
-      const res = await axios.put(`http://localhost:5000/api/students/${student._id}`, updatePayload);
+      const res = await axios.put(`/api/students/${student._id}`, updatePayload);
       onUpdate(res.data);
       setIsEditing(false);
     } catch (err) {
@@ -34,7 +34,7 @@ const StudentCard = ({ student, onUpdate, onDelete }) => {
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/students/${student._id}`);
+      await axios.delete(`/api/students/${student._id}`);
       onDelete(student._id);
     } catch (err) {
       console.error('Error deleting student:', err);
@@ -190,7 +190,7 @@ const Students = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/students');
+      const res = await axios.get('/api/students');
       setStudents(res.data);
     } catch (err) {
       console.error('Error fetching students:', err);

@@ -19,10 +19,10 @@ const Login = () => {
 
     try {
       if (isStudent) {
-        const res = await axios.post('http://localhost:5000/api/auth/student-login', { email: formData.email, password: formData.password });
+        const res = await axios.post('/api/auth/student-login', { email: formData.email, password: formData.password });
         login(res.data);
       } else {
-        const res = await axios.post('http://localhost:5000/api/auth/login', { email: formData.email, password: formData.password });
+        const res = await axios.post('/api/auth/login', { email: formData.email, password: formData.password });
         login(res.data);
       }
       navigate('/');

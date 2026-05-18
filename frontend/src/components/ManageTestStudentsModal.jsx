@@ -24,7 +24,7 @@ const ManageTestStudentsModal = ({ testId, test, onClose, onSuccess }) => {
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/students');
+      const response = await axios.get('/api/students');
       // only show enrolled students
       setStudents(response.data.filter(s => s.status === 'enrolled'));
     } catch (error) {
@@ -66,7 +66,7 @@ const ManageTestStudentsModal = ({ testId, test, onClose, onSuccess }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await axios.put(`http://localhost:5000/api/tests/${testId}/students/sync`, {
+      await axios.put(`/api/tests/${testId}/students/sync`, {
         studentIds: Array.from(selectedStudentIds)
       });
       onSuccess();

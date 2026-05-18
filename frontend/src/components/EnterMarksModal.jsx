@@ -38,7 +38,7 @@ const EnterMarksModal = ({ testId, test, onClose, onSuccess }) => {
     });
 
     try {
-      await axios.put(`http://localhost:5000/api/tests/${testId}/marks/bulk`, { marksData });
+      await axios.put(`/api/tests/${testId}/marks/bulk`, { marksData });
       onSuccess();
     } catch (error) {
       console.error('Failed to save bulk marks', error);

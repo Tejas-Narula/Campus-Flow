@@ -26,7 +26,7 @@ const CreateTestModal = ({ onClose, onCreate }) => {
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/students/metadata');
+        const res = await axios.get('/api/students/metadata');
         setMetadata(res.data);
       } catch (err) {
         console.error('Failed to fetch metadata', err);
@@ -39,7 +39,7 @@ const CreateTestModal = ({ onClose, onCreate }) => {
     const fetchChapters = async () => {
       if (formData.targetGrades.length > 0 && formData.targetBoards.length > 0) {
         try {
-          const res = await axios.get(`http://localhost:5000/api/tests/metadata/chapters`, {
+          const res = await axios.get(`/api/tests/metadata/chapters`, {
             params: {
               grades: formData.targetGrades.join(','),
               boards: formData.targetBoards.join(',')

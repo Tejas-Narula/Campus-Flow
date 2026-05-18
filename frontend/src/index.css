@@ -23,3 +23,60 @@ body {
     }
   }
 }
+
+@layer components {
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+
+  .modal-card {
+    background-color: white;
+    border-radius: 1rem;
+    width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    animation: fadeInUp 0.3s ease-out forwards;
+  }
+
+  .input-field {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    background-color: #f9fafb;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .input-field:focus {
+    background-color: white;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+
+  .btn-gradient {
+    color: white;
+    background: linear-gradient(135deg, #6C3CE1 0%, #8B5CF6 100%);
+    transition: all 0.2s ease;
+  }
+
+  .btn-gradient:hover {
+    box-shadow: 0 4px 12px rgba(108, 60, 225, 0.3);
+    transform: translateY(-1px);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

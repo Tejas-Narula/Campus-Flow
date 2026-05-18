@@ -17,7 +17,7 @@ const CreateInstitutionModal = ({ isOpen, onClose }) => {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/institutions', formData);
+      const res = await axios.post('/api/institutions', formData);
       await fetchInstitutions();
       switchInstitution(res.data._id); // Auto-switch to the new institution
       onClose();

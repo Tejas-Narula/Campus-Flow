@@ -18,7 +18,7 @@ const TestDetail = () => {
 
   const fetchTest = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/tests/${id}`);
+      const response = await axios.get(`/api/tests/${id}`);
       setTest(response.data);
     } catch (error) {
       console.error('Failed to fetch test', error);
@@ -35,7 +35,7 @@ const TestDetail = () => {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/tests/${id}/status`, { status: newStatus });
+      const response = await axios.put(`/api/tests/${id}/status`, { status: newStatus });
       setTest({ ...test, status: response.data.status });
     } catch (error) {
       console.error('Failed to update status', error);
