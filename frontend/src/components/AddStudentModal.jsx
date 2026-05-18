@@ -152,11 +152,11 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
                 <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" placeholder="John Doe" />
               </div>
-              {renderDropdownOrInput('school', 'School', metadata.schools, true)}
+              {renderDropdownOrInput('school', 'School', metadata.schools)}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {renderDropdownOrInput('grade', 'Grade/Class', metadata.grades, true)}
+              {renderDropdownOrInput('grade', 'Grade/Class', metadata.grades)}
               {renderDropdownOrInput('board', 'Board', metadata.boards)}
             </div>
 
@@ -165,7 +165,7 @@ const AddStudentModal = ({ isOpen, onClose, onStudentAdded }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Student Email *</label>
                 <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" placeholder="student@example.com" />
               </div>
-              {renderDropdownOrInput('batch', 'Batch', metadata.batches || [], true)}
+              {renderDropdownOrInput('batch', 'Batch', metadata.batches || [])}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white">

@@ -31,6 +31,10 @@ router.get('/', requireInstitution, async (req, res) => {
 // Add a new student to the active institution
 router.post('/', requireInstitution, async (req, res) => {
   try {
+    if (!req.body.name || !req.body.email) {
+      return res.status(400).json({ message: 'Name and Email are required fields' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.email, salt); // Password is auto-generated as email initially
 
@@ -58,9 +62,9 @@ router.post('/', requireInstitution, async (req, res) => {
 // Get unique metadata (grades, boards, schools, batches) for active institution
 router.get('/metadata', requireInstitution, async (req, res) => {
   try {
-    const grades = await Student.distinct('grade', { institution: req.institutionId });
+    const grades = await Student.distinct('grade', { institution: req.institutionId, grade: { $ne: null, $ne: '' } });
     const boards = await Student.distinct('board', { institution: req.institutionId, board: { $ne: null, $ne: '' } });
-    const schools = await Student.distinct('school', { institution: req.institutionId });
+    const schools = await Student.distinct('school', { institution: req.institutionId, school: { $ne: null, $ne: '' } });
     const batches = await Student.distinct('batch', { institution: req.institutionId, batch: { $ne: null, $ne: '' } });
     res.json({ grades, boards, schools, batches });
   } catch (err) {
