@@ -84,19 +84,18 @@ const AddClassModal = ({ isOpen, onClose, onAdd, isAdding }) => {
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onClick={onClose}>
       <div 
-        className="modal-card flex flex-col max-h-[90vh]" 
-        style={{ maxWidth: 500 }}
+        className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]" 
         onClick={e => e.stopPropagation()}
       >
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
-          <h2 className="text-xl font-bold text-gray-900">Add New Class</h2>
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
+          <h2 className="text-xl font-bold text-gray-800">Add New Class</h2>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 

@@ -6,24 +6,55 @@ const fs = require('fs');
 const Assignment = require('../models/Assignment');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase if credentials are provided in env
+let supabase = null;
+if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 }
 
-// Setup multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Setup multer memory storage (stores file buffers in RAM temporarily)
+const upload = multer({ storage: multer.memoryStorage() });
 
-const upload = multer({ storage: storage });
+// File upload handler supporting Supabase storage with a local disk fallback
+const handleFileUpload = async (file) => {
+  if (supabase) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const fileName = uniqueSuffix + path.extname(file.originalname);
+    
+    const { data, error } = await supabase.storage
+      .from('assignments') // The bucket name on Supabase
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Supabase upload error details:', error);
+      throw new Error('Failed to upload file to Supabase cloud storage');
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('assignments')
+      .getPublicUrl(fileName);
+
+    return publicUrlData.publicUrl;
+  } else {
+    // Local fallback when Supabase keys are not set
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const filename = uniqueSuffix + path.extname(file.originalname);
+    const uploadDir = path.join(__dirname, '..', 'uploads');
+    
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    const filePath = path.join(uploadDir, filename);
+    await fs.promises.writeFile(filePath, file.buffer);
+    return `/uploads/${filename}`;
+  }
+};
 
 router.use(authMiddleware);
 
@@ -67,7 +98,15 @@ router.post('/', requireInstitution, upload.array('attachments', 5), async (req,
     }
 
     const { title, description, dueDate, batch } = req.body;
-    const attachments = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    
+    // Process all file uploads through our hybrid handler (Supabase with Local fallback)
+    const attachments = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const fileUrl = await handleFileUpload(file);
+        attachments.push(fileUrl);
+      }
+    }
 
     const assignment = new Assignment({
       title,
@@ -82,6 +121,7 @@ router.post('/', requireInstitution, upload.array('attachments', 5), async (req,
     const savedAssignment = await assignment.save();
     res.status(201).json(savedAssignment);
   } catch (err) {
+    console.error('Create assignment error:', err);
     res.status(400).json({ message: err.message });
   }
 });
