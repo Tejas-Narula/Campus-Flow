@@ -18,6 +18,7 @@ import Assignments from './pages/Assignments';
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (loading) {
     return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>;
@@ -32,10 +33,12 @@ const ProtectedRoute = ({ children }) => {
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isMobileOpen={isMobileMenuOpen}
+        closeMobile={() => setIsMobileMenuOpen(false)}
       />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-8">
+        <Header onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

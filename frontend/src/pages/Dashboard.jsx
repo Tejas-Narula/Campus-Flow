@@ -54,7 +54,7 @@ const Dashboard = () => {
     
     return (
       <div className="animate-fade-in-up">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 tracking-tight">
           {getGreeting()}, {user?.name}!
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -118,7 +118,7 @@ const Dashboard = () => {
 
   return (
     <div className="animate-fade-in-up">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 tracking-tight">Dashboard</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 tracking-tight">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between mb-4">

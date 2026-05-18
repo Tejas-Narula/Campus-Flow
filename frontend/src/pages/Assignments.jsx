@@ -86,12 +86,12 @@ const Assignments = () => {
 
   return (
     <div className="animate-fade-in-up">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Assignments</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">Assignments</h1>
         {user?.role !== 'student' && !showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm"
+            className="flex items-center justify-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors shadow-sm w-full sm:w-auto"
           >
             <Plus size={18} />
             <span className="font-medium">Create Assignment</span>
@@ -144,7 +144,7 @@ const Assignments = () => {
                 placeholder="Write the questions or instructions here..."
               />
             </div>
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
                 <input
@@ -193,8 +193,8 @@ const Assignments = () => {
         <div className="grid grid-cols-1 gap-4">
           {assignments.map((assignment) => (
             <div key={assignment._id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-bold text-gray-800">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800">
                   {assignment.title}
                   {assignment.batch && (
                     <span className="ml-3 text-xs font-medium bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md border border-indigo-100 align-middle">
@@ -203,7 +203,7 @@ const Assignments = () => {
                   )}
                 </h3>
                 {assignment.dueDate && (
-                  <div className="flex items-center text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                  <div className="flex items-center text-sm font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full shrink-0">
                     <Calendar size={14} className="mr-1.5" />
                     Due: {new Date(assignment.dueDate).toLocaleDateString()}
                   </div>

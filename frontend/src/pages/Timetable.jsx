@@ -124,16 +124,16 @@ const Timetable = () => {
   return (
     <>
       <div className="animate-fade-in-up pb-12">
-        <div className="flex justify-between items-end mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Timetable</h1>
-            <p className="text-gray-500 mt-1">Manage and view your monthly schedule</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 tracking-tight">Timetable</h1>
+            <p className="text-gray-500 mt-1 text-sm sm:text-base">Manage and view your monthly schedule</p>
           </div>
           
           {user?.role !== 'student' && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="btn-gradient px-5 py-2.5 rounded-xl text-sm font-medium flex items-center shadow-sm"
+              className="btn-gradient px-5 py-2.5 rounded-xl text-sm font-medium flex items-center shadow-sm w-full sm:w-auto justify-center"
             >
               <Plus size={18} className="mr-2" />
               Add Class
@@ -177,8 +177,8 @@ const Timetable = () => {
                 if (!hasDaysInMonth) return null;
 
                 return (
-                  <div key={weekIdx} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-                    <div className="grid grid-cols-8 border-b border-gray-200 bg-gray-50">
+                  <div key={weekIdx} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm overflow-x-auto">
+                    <div className="grid grid-cols-8 border-b border-gray-200 bg-gray-50 min-w-[800px]">
                       <div className="p-3 text-center text-xs font-semibold text-gray-500 border-r border-gray-200 uppercase tracking-wider">
                         Time
                       </div>
@@ -201,7 +201,7 @@ const Timetable = () => {
                       {/* Background Grid */}
                       <div className="divide-y divide-gray-100">
                         {TIME_SLOTS.map((time, timeIdx) => (
-                          <div key={timeIdx} className="grid grid-cols-8 h-[80px]">
+                          <div key={timeIdx} className="grid grid-cols-8 h-[80px] min-w-[800px]">
                             <div className="p-2 text-xs font-medium text-gray-500 border-r border-gray-200 flex items-start justify-center bg-gray-50/30">
                               {time}
                             </div>
@@ -218,7 +218,7 @@ const Timetable = () => {
                       </div>
 
                       {/* Absolutely Positioned Classes */}
-                      <div className="absolute inset-0 grid grid-cols-8 pointer-events-none">
+                      <div className="absolute inset-0 grid grid-cols-8 pointer-events-none min-w-[800px]">
                         <div className="border-r border-transparent"></div>
                         {week.map((day, dayIdx) => {
                           const dayClasses = getClassesForDay(day);

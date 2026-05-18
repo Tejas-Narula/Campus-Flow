@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Building2, ChevronDown, Plus, Menu } from 'lucide-react';
 import CreateInstitutionModal from './CreateInstitutionModal';
 
-const Header = () => {
+const Header = ({ onMobileMenuToggle }) => {
   const { user, institutions, activeInstitution, switchInstitution } = useContext(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,17 +23,28 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="bg-white border-b border-gray-100 h-16 flex items-center justify-end px-4 sm:px-8 z-10 shrink-0 shadow-sm relative">
+    <header className="bg-white border-b border-gray-100 h-16 flex items-center justify-between px-4 sm:px-8 z-10 shrink-0 shadow-sm relative">
+      {/* Mobile hamburger button */}
+      <button 
+        onClick={onMobileMenuToggle}
+        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors focus:outline-none md:hidden"
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Spacer to push institution dropdown to the right on desktop */}
+      <div className="hidden md:block" />
+
       <div className="relative" ref={dropdownRef}>
         <button 
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center space-x-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 py-2 px-4 rounded-xl transition-colors"
+          className="flex items-center space-x-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 py-2 px-3 sm:px-4 rounded-xl transition-colors"
         >
-          <Building2 size={18} className="text-indigo-600" />
-          <span className="font-medium text-sm text-gray-800 max-w-[150px] sm:max-w-xs truncate">
+          <Building2 size={18} className="text-indigo-600 shrink-0" />
+          <span className="font-medium text-sm text-gray-800 max-w-[120px] sm:max-w-xs truncate">
             {activeInstName}
           </span>
-          <ChevronDown size={16} className={`text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown size={16} className={`text-gray-500 transition-transform shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {isDropdownOpen && (

@@ -57,11 +57,11 @@ const TestDetail = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-        <div className="flex justify-between items-start mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{test.name}</h1>
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{test.name}</h1>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-gray-500">
               <span className="flex items-center">
                 <FileText size={16} className="mr-1.5" />
                 Total Marks: {test.totalMarks}
@@ -77,7 +77,7 @@ const TestDetail = () => {
             </div>
           </div>
           
-          <div>
+          <div className="shrink-0">
             {user?.role === 'student' ? (
               <span className={`text-sm font-medium rounded-lg px-4 py-2 ${
                 test.status === 'ongoing' ? 'bg-amber-50 text-amber-700 ring-amber-500/30 ring-1 ring-inset' :
@@ -120,13 +120,13 @@ const TestDetail = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">{user?.role === 'student' ? 'My Result' : 'Students & Marks'}</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">{user?.role === 'student' ? 'My Result' : 'Students & Marks'}</h2>
         {user?.role !== 'student' && (
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button 
               onClick={() => setIsManageStudentsModalOpen(true)}
-              className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2"
+              className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
             >
               <Settings size={16} />
               <span>Manage Students</span>
@@ -134,7 +134,7 @@ const TestDetail = () => {
             <button 
               onClick={() => setIsEnterMarksModalOpen(true)}
               disabled={test.students.length === 0}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <PenTool size={16} />
               <span>Enter Marks</span>
@@ -158,7 +158,7 @@ const TestDetail = () => {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
               <tr>

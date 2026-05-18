@@ -63,15 +63,15 @@ const Tests = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tests</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Tests</h1>
           <p className="text-gray-500 text-sm mt-1">Manage and track student assessments</p>
         </div>
         {user?.role !== 'student' && (
           <button 
             onClick={() => setIsCreateModalOpen(true)}
-            className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center space-x-2"
+            className="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
           >
             <Plus size={18} />
             <span>Create Test</span>
